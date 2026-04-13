@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Clock, User } from "lucide-react";
+import { Plus, Clock, User, CalendarDays } from "lucide-react";
 import { toast } from "sonner";
 
 interface Agendamento {
@@ -28,10 +28,10 @@ const agendamentosMock: Agendamento[] = [
 ];
 
 const statusLabel: Record<string, { label: string; className: string }> = {
-  agendado: { label: "Agendado", className: "bg-accent text-accent-foreground" },
-  confirmado: { label: "Confirmado", className: "bg-success/10 text-success" },
-  concluido: { label: "Concluído", className: "bg-primary/10 text-primary" },
-  cancelado: { label: "Cancelado", className: "bg-destructive/10 text-destructive" },
+  agendado: { label: "Agendado", className: "bg-accent text-accent-foreground border border-accent" },
+  confirmado: { label: "Confirmado", className: "bg-success/10 text-success border border-success/20" },
+  concluido: { label: "Concluído", className: "bg-primary/10 text-primary border border-primary/20" },
+  cancelado: { label: "Cancelado", className: "bg-destructive/10 text-destructive border border-destructive/20" },
 };
 
 const Agendamentos = () => {
@@ -60,10 +60,15 @@ const Agendamentos = () => {
     <DashboardLayout title="Agendamentos">
       <div className="space-y-6 animate-fade-in">
         <div className="flex items-center justify-between">
-          <p className="text-muted-foreground">Gerencie as consultas da sua clínica</p>
+          <div>
+            <p className="text-muted-foreground text-sm">Gerencie as consultas da sua clínica</p>
+            <span className="text-xs font-medium text-muted-foreground bg-muted px-3 py-1 rounded-full mt-2 inline-block">
+              {agendamentos.length} agendamentos
+            </span>
+          </div>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-              <Button><Plus className="w-4 h-4 mr-2" /> Novo Agendamento</Button>
+              <Button className="gap-2"><Plus className="w-4 h-4" /> Novo Agendamento</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
@@ -109,36 +114,38 @@ const Agendamentos = () => {
         </div>
 
         {datasUnicas.map((data) => (
-          <Card key={data}>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">
-                {new Date(data + "T12:00:00").toLocaleDateString("pt-BR", {
-                  weekday: "long",
-                  day: "numeric",
-                  month: "long",
-                })}
-              </CardTitle>
+          <Card key={data} className="overflow-hidden">
+            <CardHeader className="pb-3 bg-gradient-to-r from-card to-accent/20 border-b border-border">
+              <div className="flex items-center gap-2">
+                <CalendarDays className="w-4 h-4 text-primary" />
+                <CardTitle className="text-base capitalize">
+                  {new Date(data + "T12:00:00").toLocaleDateString("pt-BR", {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long",
+                  })}
+                </CardTitle>
+              </div>
             </CardHeader>
-            <CardContent className="space-y-2">
+            <CardContent className="p-4 space-y-2">
               {agendamentos
                 .filter((a) => a.data === data)
                 .sort((a, b) => a.hora.localeCompare(b.hora))
                 .map((ag) => (
-                  <div key={ag.id} className="flex items-center justify-between p-3 rounded-lg border border-border bg-background">
+                  <div key={ag.id} className="flex items-center justify-between p-4 rounded-xl border border-border bg-background hover:border-primary/20 hover:shadow-sm transition-all duration-200 group">
                     <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-1.5 text-muted-foreground">
-                        <Clock className="w-3.5 h-3.5" />
-                        <span className="text-sm font-mono w-12">{ag.hora}</span>
+                      <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                        <span className="text-sm font-bold text-primary font-mono">{ag.hora}</span>
                       </div>
                       <div>
                         <div className="flex items-center gap-1.5">
                           <User className="w-3.5 h-3.5 text-muted-foreground" />
-                          <p className="font-medium text-sm text-foreground">{ag.paciente}</p>
+                          <p className="font-semibold text-sm text-foreground">{ag.paciente}</p>
                         </div>
-                        <p className="text-xs text-muted-foreground ml-5">{ag.procedimento}</p>
+                        <p className="text-xs text-muted-foreground ml-5 mt-0.5">{ag.procedimento}</p>
                       </div>
                     </div>
-                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${statusLabel[ag.status].className}`}>
+                    <span className={`text-xs font-medium px-3 py-1.5 rounded-full ${statusLabel[ag.status].className}`}>
                       {statusLabel[ag.status].label}
                     </span>
                   </div>

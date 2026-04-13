@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Search, Phone, Mail, Calendar } from "lucide-react";
+import { Plus, Search, Phone, Mail, Calendar, Users } from "lucide-react";
 import { toast } from "sonner";
 
 interface Paciente {
@@ -55,19 +55,25 @@ const Pacientes = () => {
   return (
     <DashboardLayout title="Pacientes">
       <div className="space-y-6 animate-fade-in">
+        {/* Header com contador */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar paciente..."
-              value={busca}
-              onChange={(e) => setBusca(e.target.value)}
-              className="pl-9"
-            />
+          <div className="flex items-center gap-3">
+            <div className="relative w-full sm:w-80">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar paciente..."
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            <span className="text-xs font-medium text-muted-foreground bg-muted px-3 py-1.5 rounded-full whitespace-nowrap">
+              {filtrados.length} pacientes
+            </span>
           </div>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-              <Button><Plus className="w-4 h-4 mr-2" /> Novo Paciente</Button>
+              <Button className="gap-2"><Plus className="w-4 h-4" /> Novo Paciente</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
@@ -98,33 +104,36 @@ const Pacientes = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtrados.map((paciente) => (
-            <Card key={paciente.id} className="hover:border-primary/30 transition-colors cursor-pointer">
-              <CardContent className="p-5">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center">
-                    <span className="text-sm font-semibold text-accent-foreground">
-                      {paciente.nome.split(" ").map((n) => n[0]).join("").slice(0, 2)}
-                    </span>
+            <Card key={paciente.id} className="hover:border-primary/30 hover:shadow-md transition-all duration-200 cursor-pointer group overflow-hidden">
+              <CardContent className="p-0">
+                <div className="h-1 bg-gradient-to-r from-primary/40 to-primary/10 group-hover:from-primary group-hover:to-primary/30 transition-all" />
+                <div className="p-5">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary/10 to-accent flex items-center justify-center group-hover:from-primary/20 transition-colors">
+                      <span className="text-sm font-bold text-primary">
+                        {paciente.nome.split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground text-sm">{paciente.nome}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(paciente.dataNascimento + "T12:00:00").toLocaleDateString("pt-BR")}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-semibold text-foreground text-sm">{paciente.nome}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(paciente.dataNascimento + "T12:00:00").toLocaleDateString("pt-BR")}
-                    </p>
-                  </div>
-                </div>
-                <div className="space-y-1.5 text-sm">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Mail className="w-3.5 h-3.5" />
-                    <span className="truncate">{paciente.email}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Phone className="w-3.5 h-3.5" />
-                    <span>{paciente.telefone}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Calendar className="w-3.5 h-3.5" />
-                    <span>Última consulta: {paciente.ultimaConsulta === "-" ? "-" : new Date(paciente.ultimaConsulta + "T12:00:00").toLocaleDateString("pt-BR")}</span>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2.5 text-muted-foreground">
+                      <Mail className="w-3.5 h-3.5 shrink-0" />
+                      <span className="truncate">{paciente.email}</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-muted-foreground">
+                      <Phone className="w-3.5 h-3.5 shrink-0" />
+                      <span>{paciente.telefone}</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-muted-foreground">
+                      <Calendar className="w-3.5 h-3.5 shrink-0" />
+                      <span>Última: {paciente.ultimaConsulta === "-" ? "-" : new Date(paciente.ultimaConsulta + "T12:00:00").toLocaleDateString("pt-BR")}</span>
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -133,8 +142,10 @@ const Pacientes = () => {
         </div>
 
         {filtrados.length === 0 && (
-          <div className="text-center py-12 text-muted-foreground">
-            <p>Nenhum paciente encontrado.</p>
+          <div className="text-center py-16 text-muted-foreground">
+            <Users className="w-12 h-12 mx-auto mb-3 opacity-30" />
+            <p className="font-medium">Nenhum paciente encontrado</p>
+            <p className="text-sm mt-1">Tente buscar com outros termos</p>
           </div>
         )}
       </div>

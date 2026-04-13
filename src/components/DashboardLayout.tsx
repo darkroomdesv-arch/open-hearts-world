@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Calendar, Users, DollarSign, LayoutDashboard, LogOut, Settings } from "lucide-react";
+import { Calendar, Users, DollarSign, LayoutDashboard, LogOut, Settings, Plug } from "lucide-react";
 import { useLocation, Link } from "react-router-dom";
 import {
   Sidebar,
@@ -21,6 +21,7 @@ const menuItems = [
   { title: "Agendamentos", url: "/dashboard/agendamentos", icon: Calendar },
   { title: "Pacientes", url: "/dashboard/pacientes", icon: Users },
   { title: "Financeiro", url: "/dashboard/financeiro", icon: DollarSign },
+  { title: "Integrações", url: "/dashboard/integracoes", icon: Plug },
 ];
 
 function AppSidebar() {
