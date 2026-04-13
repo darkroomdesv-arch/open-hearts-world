@@ -14,16 +14,88 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      funcionario_permissoes: {
+        Row: {
+          created_at: string
+          funcionario_id: string
+          id: string
+          modulo: Database["public"]["Enums"]["modulo_sistema"]
+          tem_acesso: boolean
+        }
+        Insert: {
+          created_at?: string
+          funcionario_id: string
+          id?: string
+          modulo: Database["public"]["Enums"]["modulo_sistema"]
+          tem_acesso?: boolean
+        }
+        Update: {
+          created_at?: string
+          funcionario_id?: string
+          id?: string
+          modulo?: Database["public"]["Enums"]["modulo_sistema"]
+          tem_acesso?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "funcionario_permissoes_funcionario_id_fkey"
+            columns: ["funcionario_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      funcionarios: {
+        Row: {
+          ativo: boolean
+          cargo: Database["public"]["Enums"]["cargo_funcionario"]
+          created_at: string
+          email: string
+          id: string
+          nome: string
+          telefone: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          ativo?: boolean
+          cargo?: Database["public"]["Enums"]["cargo_funcionario"]
+          created_at?: string
+          email: string
+          id?: string
+          nome: string
+          telefone?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          ativo?: boolean
+          cargo?: Database["public"]["Enums"]["cargo_funcionario"]
+          created_at?: string
+          email?: string
+          id?: string
+          nome?: string
+          telefone?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      cargo_funcionario:
+        | "dentista"
+        | "recepcionista"
+        | "auxiliar"
+        | "administrador"
+      modulo_sistema: "agenda" | "pacientes" | "financeiro" | "integracoes"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +222,14 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      cargo_funcionario: [
+        "dentista",
+        "recepcionista",
+        "auxiliar",
+        "administrador",
+      ],
+      modulo_sistema: ["agenda", "pacientes", "financeiro", "integracoes"],
+    },
   },
 } as const
