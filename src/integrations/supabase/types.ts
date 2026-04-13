@@ -14,6 +14,117 @@ export type Database = {
   }
   public: {
     Tables: {
+      agendamentos: {
+        Row: {
+          created_at: string
+          data_hora: string
+          duracao_minutos: number
+          funcionario_id: string
+          id: string
+          observacoes: string | null
+          paciente_id: string
+          status: Database["public"]["Enums"]["status_agendamento"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data_hora: string
+          duracao_minutos?: number
+          funcionario_id: string
+          id?: string
+          observacoes?: string | null
+          paciente_id: string
+          status?: Database["public"]["Enums"]["status_agendamento"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data_hora?: string
+          duracao_minutos?: number
+          funcionario_id?: string
+          id?: string
+          observacoes?: string | null
+          paciente_id?: string
+          status?: Database["public"]["Enums"]["status_agendamento"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agendamentos_funcionario_id_fkey"
+            columns: ["funcionario_id"]
+            isOneToOne: false
+            referencedRelation: "funcionarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agendamentos_paciente_id_fkey"
+            columns: ["paciente_id"]
+            isOneToOne: false
+            referencedRelation: "pacientes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financeiro: {
+        Row: {
+          agendamento_id: string | null
+          categoria: string | null
+          created_at: string
+          data: string
+          descricao: string
+          forma_pagamento: string | null
+          id: string
+          paciente_id: string | null
+          status_pagamento: Database["public"]["Enums"]["status_pagamento"]
+          tipo: Database["public"]["Enums"]["tipo_financeiro"]
+          updated_at: string
+          valor: number
+        }
+        Insert: {
+          agendamento_id?: string | null
+          categoria?: string | null
+          created_at?: string
+          data?: string
+          descricao: string
+          forma_pagamento?: string | null
+          id?: string
+          paciente_id?: string | null
+          status_pagamento?: Database["public"]["Enums"]["status_pagamento"]
+          tipo: Database["public"]["Enums"]["tipo_financeiro"]
+          updated_at?: string
+          valor: number
+        }
+        Update: {
+          agendamento_id?: string | null
+          categoria?: string | null
+          created_at?: string
+          data?: string
+          descricao?: string
+          forma_pagamento?: string | null
+          id?: string
+          paciente_id?: string | null
+          status_pagamento?: Database["public"]["Enums"]["status_pagamento"]
+          tipo?: Database["public"]["Enums"]["tipo_financeiro"]
+          updated_at?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financeiro_agendamento_id_fkey"
+            columns: ["agendamento_id"]
+            isOneToOne: false
+            referencedRelation: "agendamentos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financeiro_paciente_id_fkey"
+            columns: ["paciente_id"]
+            isOneToOne: false
+            referencedRelation: "pacientes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       funcionario_permissoes: {
         Row: {
           created_at: string
@@ -82,6 +193,48 @@ export type Database = {
         }
         Relationships: []
       }
+      pacientes: {
+        Row: {
+          ativo: boolean
+          cpf: string | null
+          created_at: string
+          data_nascimento: string | null
+          email: string | null
+          endereco: string | null
+          id: string
+          nome: string
+          observacoes: string | null
+          telefone: string | null
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          cpf?: string | null
+          created_at?: string
+          data_nascimento?: string | null
+          email?: string | null
+          endereco?: string | null
+          id?: string
+          nome: string
+          observacoes?: string | null
+          telefone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          cpf?: string | null
+          created_at?: string
+          data_nascimento?: string | null
+          email?: string | null
+          endereco?: string | null
+          id?: string
+          nome?: string
+          observacoes?: string | null
+          telefone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -96,6 +249,9 @@ export type Database = {
         | "auxiliar"
         | "administrador"
       modulo_sistema: "agenda" | "pacientes" | "financeiro" | "integracoes"
+      status_agendamento: "agendado" | "confirmado" | "concluido" | "cancelado"
+      status_pagamento: "pendente" | "pago" | "cancelado"
+      tipo_financeiro: "receita" | "despesa"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -230,6 +386,9 @@ export const Constants = {
         "administrador",
       ],
       modulo_sistema: ["agenda", "pacientes", "financeiro", "integracoes"],
+      status_agendamento: ["agendado", "confirmado", "concluido", "cancelado"],
+      status_pagamento: ["pendente", "pago", "cancelado"],
+      tipo_financeiro: ["receita", "despesa"],
     },
   },
 } as const
